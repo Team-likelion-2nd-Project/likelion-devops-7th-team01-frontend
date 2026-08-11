@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import { Button, Field, Input, TextLink } from '../components/ui'
+import { signIn } from '../auth'
 
 /**
  * 로그인 화면.
- * Cognito 연동 전 단계 — onSubmit 안의 TODO 자리에 인증 호출을 붙이면 됩니다.
+ * Cognito 연동 완료.
  */
-export default function LoginPage({ onSignup, onForgotPassword }) {
+export default function LoginPage({ onSignup, onForgotPassword, onLoginSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -21,10 +22,18 @@ export default function LoginPage({ onSignup, onForgotPassword }) {
     setError('')
     setPending(true)
     try {
-      // TODO: Cognito 로그인 호출 (M6-1 완료 후 연결)
-      // await signIn({ username: email, password })
-    } catch {
-      setError('이메일 또는 비밀번호를 확인해 주세요.')
+      await signIn({ email, password })
+      onLoginSuccess?.()
+    } catch (err) {
+      if (err.code === 'UserNotConfirmedException') {
+        setError('이메일 인증이 완료되지 않았습니다.')
+      } else if (err.code === 'NotAuthorizedException') {
+        setError('이메일 또는 비밀번호를 확인해 주세요.')
+      } else if (err.code === 'UserNotFoundException') {
+        setError('등록되지 않은 이메일입니다.')
+      } else {
+        setError('로그인에 실패했습니다. 다시 시도해 주세요.')
+      }
     } finally {
       setPending(false)
     }
@@ -75,7 +84,7 @@ export default function LoginPage({ onSignup, onForgotPassword }) {
         </div>
 
         <Button type="submit" full disabled={!canSubmit} className="mt-7">
-          {pending ? '로그인 중' : '로그인'}
+          {pending ? '로그인 중...' : '로그인'}
         </Button>
       </form>
 
