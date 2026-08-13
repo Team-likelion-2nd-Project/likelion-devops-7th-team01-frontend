@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import CoursesPage from './pages/CoursesPage';
@@ -9,15 +9,24 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function LoginRoute() {
   const navigate = useNavigate();
-  return <LoginPage onSignup={() => navigate('/signup')} />;
+  return (
+    <LoginPage
+      onSignup={() => navigate('/signup')}
+      onLoginSuccess={() => navigate('/courses')}
+    />
+  );
 }
 
 function SignupRoute() {
   const navigate = useNavigate();
-  return <SignupPage onLogin={() => navigate('/login')} />;
+  return (
+    <SignupPage
+      onLogin={() => navigate('/login')}
+      onComplete={() => navigate('/login')}
+    />
+  );
 }
 
-// 로그인 후 화면들은 상단에 NavTabs를 공통으로 깔아줌
 function AppLayout({ children }) {
   return (
     <div>
