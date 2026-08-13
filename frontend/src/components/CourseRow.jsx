@@ -16,7 +16,7 @@ export default function CourseRow({ course, enrollmentId, onEnrolled, onCancelle
       const result = await enrollCourse(course.id);
       onEnrolled(result.enrollmentId);
     } catch (err) {
-      setErrorMsg(err.error || '신청에 실패했습니다');
+      setErrorMsg(err.message || '신청에 실패했습니다');
     } finally {
       setBusy(false);
     }
@@ -29,7 +29,7 @@ export default function CourseRow({ course, enrollmentId, onEnrolled, onCancelle
       await cancelEnrollment(enrollmentId);
       onCancelled();
     } catch (err) {
-      setErrorMsg(err.error || '취소에 실패했습니다');
+      setErrorMsg(err.message || '취소에 실패했습니다');
     } finally {
       setBusy(false);
     }

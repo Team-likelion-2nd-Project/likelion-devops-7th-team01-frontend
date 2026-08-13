@@ -1,8 +1,17 @@
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { isLoggedIn } from '../utils/auth';
+import { isAuthenticated } from '../auth';
 
-// 로그인 안 했으면 /login으로 돌려보냄.
-// 감싸인 페이지(children)는 로그인된 사람만 볼 수 있게 됨.
+// isAuthenticated()가 Promise라서, 확인 끝날 때까지 "확인 중" 화면을 잠깐 보여줌
 export default function ProtectedRoute({ children }) {
-  return isLoggedIn() ? children : <Navigate to="/login" replace />;
+  const [status, setStatus] = useState('checking');
+
+  useEffect(() => {
+    isAuthenticated().then((ok) => setStatus(ok ? 'authed' : 'anon'));
+  }, []);
+
+  if (status === 'checking') {
+    return <p className="text-center py-16 font-mono text-graphite">확인 중</p>;
+  }
+  return status === 'authed' ? children : <Navigate to="/login" replace />;
 }
