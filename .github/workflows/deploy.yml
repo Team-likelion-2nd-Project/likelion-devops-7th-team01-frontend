@@ -31,6 +31,8 @@ jobs:
         run: |
           npm ci
           npm run build
+        env:
+          VITE_API_URL: http://k8s-default-backendi-89c25e9e8b-1992645647.ap-northeast-3.elb.amazonaws.com
 
       - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
